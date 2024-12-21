@@ -31,8 +31,8 @@ export const fetchProfile = async (dispatch: Dispatch<Action>) => {
   })
 }
 
-export const fetchTopArtists = async (dispatch: Dispatch<Action>) => {
-  const response = await fetch('/api/top/artists');
+export const fetchTopArtists = async (dispatch: Dispatch<Action>, timeRange: string = 'short_term') => {
+  const response = await fetch(`/api/top/artists?time_range=${timeRange}`);
   if (!response.ok) {
     return;
   }
@@ -43,8 +43,8 @@ export const fetchTopArtists = async (dispatch: Dispatch<Action>) => {
   });
 }
 
-export const fetchTopTracks = async (dispatch: Dispatch<Action>) => {
-  const response = await fetch('/api/top/tracks');
+export const fetchTopTracks = async (dispatch: Dispatch<Action>, timeRange: string = 'short_term') => {
+  const response = await fetch(`/api/top/tracks?time_range=${timeRange}`);
   if (!response.ok) {
     return;
   }
@@ -55,11 +55,11 @@ export const fetchTopTracks = async (dispatch: Dispatch<Action>) => {
   });
 }
 
-export const setTop5Loading = (dispatch: Dispatch<Action>, value: boolean) => {
+export const setInitLoading = (dispatch: Dispatch<Action>, value: boolean) => {
   dispatch({
     type: 'setLoading',
     value: {
-      top5Loading: value
+      initLoading: value
     }
   });
 }

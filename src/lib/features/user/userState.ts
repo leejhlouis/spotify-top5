@@ -4,7 +4,7 @@ const initialState: UserState = {
   authenticated: false,
   loading: {
     authLoading: true,
-    top5Loading: false
+    initLoading: false
   },
   displayName: '',
   topArtists: [],

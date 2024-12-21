@@ -6,5 +6,5 @@ type Heading1Props = {
 }
 
 export default function Heading1({ children, withMarginBottom = true }: Heading1Props) {
-  return <h1 className={`text-2xl lg:text-4xl font-bold mb-6 ${withMarginBottom && 'lg:mb-12'}`}>{children}</h1>
+  return <h1 className={`text-2xl lg:text-4xl font-bold ${withMarginBottom && 'mb-6 lg:mb-12'}`}>{children}</h1>
 }
