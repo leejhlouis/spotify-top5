@@ -12,7 +12,7 @@ export default function Home() {
 
   const { authenticated, displayName, topArtists, topTracks, loading } = useUser()
   const { authLoading, top5Loading } = loading
-  
+
   useEffect(() => {
     const init = async () => {
       if (authenticated) {
@@ -22,49 +22,56 @@ export default function Home() {
       }
     }
     init()
-  }, [authenticated])
+  }, [authenticated, userDispatch])
 
   const router = useRouter()
   const handleLogin = () => {
     router.push('/api/auth/login')
   }
 
+  const NotLoggedInView = () => {
+    return (
+      <div className='h-[40vh] flex items-center'>
+        <div>
+          <Heading1 withMarginBottom={false}>Your Spotify Top 5</Heading1>
+          <p>Discover your personalized top 5 Spotify artists and tracks! Experience what Spotify Wrapped doesn&apos;t offer!</p>
+          <Button
+            className='bg-lime-500 text-black mt-6'
+            onClick={handleLogin}
+          >
+            Continue with Spotify
+          </Button>
+        </div>
+      </div>
+    )
+  }
+  const LoggedInView = () => {
+    return (
+      <>
+        <Heading1>Hi, {displayName}!</Heading1>
+        <div className='grid md:grid-cols-2 gap-8 md:gap-4'>
+          {topArtists && (
+            <Top5Container
+              type='artists'
+              items={topArtists}
+            />
+          )}
+          {topTracks && (
+            <Top5Container
+              type='tracks'
+              items={topTracks}
+            />
+          )}
+        </div>
+      </>
+    )
+  }
+
   return (
     <div>
       {top5Loading && <div>Loading...</div>}
-      {authenticated && !top5Loading && (
-        <>
-          <Heading1>Hi, {displayName}!</Heading1>
-          <div className='grid md:grid-cols-2 gap-8 md:gap-4'>
-            {topArtists && (
-              <Top5Container
-                type='artists'
-                items={topArtists}
-              />
-            )}
-            {topTracks && (
-              <Top5Container
-                type='tracks'
-                items={topTracks}
-              />
-            )}
-          </div>
-        </>
-      )}
-      {!authLoading && !authenticated && (
-        <div className='h-[40vh] flex items-center'>
-          <div>
-            <Heading1 withMarginBottom={false}>Your Spotify Top 5</Heading1>
-            <p>Discover your personalized monthly top 5 Spotify artists and tracks! Experience what Spotify Wrapped doesn&apos;t offer!</p>
-            <Button
-              className='bg-lime-500 text-black mt-6'
-              onClick={handleLogin}
-            >
-              Continue with Spotify
-            </Button>
-          </div>
-        </div>
-      )}
+      {!authLoading && !authenticated && <NotLoggedInView />}
+      {authenticated && !top5Loading && <LoggedInView />}
     </div>
   )
 }

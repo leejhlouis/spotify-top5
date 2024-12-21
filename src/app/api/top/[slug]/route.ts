@@ -44,7 +44,7 @@ export async function GET(_: NextRequest, { params }: { params: Promise<{ slug: 
   } else {
     items = data.items.map(({ name, artists, album, external_urls }: TrackItem) => ({
       image: album.images[0].url,
-      artists: artists.map((artist: { name: string }) => artist.name).join(', '),
+      artists: artists.map((artist: { name: string }) => artist.name),
       url: external_urls.spotify,
       name
     }))
