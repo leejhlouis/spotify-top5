@@ -3,6 +3,7 @@ import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { useUser, useUserDispatch } from '@/app/user-provider'
 import Container from '@/components/Container'
+import { handleLogOut } from '@/lib/features/user/userActions'
 
 type NavLink = {
   href: string
@@ -19,14 +20,7 @@ export default function Navbar() {
   const pathname = usePathname()
   const { authenticated } = useUser()
   const userDispatch = useUserDispatch()
-
-  const handleLogout = async () => {
-    await fetch('/api/auth/logout')
-    userDispatch({
-      type: 'authenticatedSet',
-      value: false
-    })
-  }
+  const logout = () => handleLogOut(userDispatch)
 
   return (
     <nav className='border-b border-white border-opacity-5'>
@@ -44,7 +38,7 @@ export default function Navbar() {
               </li>
             ))}
             {authenticated && (
-              <a className='text-white' onClick={handleLogout}>Logout</a>
+              <a className='text-white' onClick={logout}>Logout</a>
             )}
           </ul>
         </div>

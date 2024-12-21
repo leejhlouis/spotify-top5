@@ -63,3 +63,11 @@ export const setTop5Loading = (dispatch: Dispatch<Action>, value: boolean) => {
     }
   });
 }
+
+export const handleLogOut = async (dispatch: Dispatch<Action>) => {
+  await fetch('/api/auth/logout')
+  dispatch({
+    type: 'setAuthenticated',
+    value: false
+  })
+}
