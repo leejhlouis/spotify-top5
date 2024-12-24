@@ -55,11 +55,11 @@ export const fetchTopTracks = async (dispatch: Dispatch<Action>, timeRange: stri
   });
 }
 
-export const setInitLoading = (dispatch: Dispatch<Action>, value: boolean) => {
+export const setLoading = (dispatch: Dispatch<Action>, value: object) => {
   dispatch({
     type: 'setLoading',
     value: {
-      initLoading: value
+      ...value
     }
   });
 }

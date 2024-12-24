@@ -5,8 +5,9 @@ import Button from '@/components/Button'
 import { useRouter } from 'next/navigation'
 import Heading1 from '@/components/Heading1'
 import { useUser, useUserDispatch } from '@/app/user-provider'
-import { fetchProfile, fetchTopArtists, fetchTopTracks, setInitLoading } from '@/lib/features/user/userActions'
+import { fetchProfile, fetchTopArtists, fetchTopTracks, setLoading } from '@/lib/features/user/userActions'
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/react'
+import { ChevronDownIcon, SlashIcon } from '@heroicons/react/24/outline'
 
 type TimeRange = {
   id: number
@@ -19,27 +20,57 @@ const TIME_RANGES: TimeRange[] = [
   { id: 3, label: 'Last year', value: 'long_term' }
 ]
 
+const LoadingView = () => {
+  const [showLoading, setShowLoading] = useState(false)
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowLoading(true)
+    }, 100)
+    return () => clearTimeout(timer)
+  }, [])
+
+  if (!showLoading) return <></>
+  return (
+    <div className='flex justify-center items-center text-lime-500 h-[70vh]'>
+      <SlashIcon className='animate-spin size-16' />
+    </div>
+  )
+}
+
 export default function Home() {
   const userDispatch = useUserDispatch()
   const [selectedTimeRange, setSelectedTimeRange] = useState<TimeRange>(TIME_RANGES[0])
 
   const { authenticated, displayName, topArtists, topTracks, loading } = useUser()
-  const { authLoading, initLoading } = loading
+  const { authLoading, initLoading, top5Loading } = loading
 
   useEffect(() => {
     const loadAsync = async () => {
       if (authenticated) {
         const promises = [fetchTopArtists(userDispatch, selectedTimeRange.value), fetchTopTracks(userDispatch, selectedTimeRange.value)]
+        setLoading(userDispatch, {
+          top5Loading: true
+        })
         if (!displayName) {
-          setInitLoading(userDispatch, true)
+          setLoading(userDispatch, {
+            initLoading: true
+          })
           promises.push(fetchProfile(userDispatch))
         }
         await Promise.all(promises)
-        setInitLoading(userDispatch, false)
+        setLoading(userDispatch, {
+          initLoading: false,
+          top5Loading: false
+        })
       }
     }
     loadAsync()
   }, [selectedTimeRange, authenticated, userDispatch, displayName])
+
+  const handleOnTimeRangeChange = (value: TimeRange) => {
+    setSelectedTimeRange(value)
+  }
 
   const router = useRouter()
   const handleLogin = () => {
@@ -65,23 +96,27 @@ export default function Home() {
   const LoggedInView = () => {
     return (
       <>
-        <div className='flex items-center justify-between mb-6 lg:mb-12'>
-          <Heading1 withMarginBottom={false}>Hi, {displayName}!</Heading1>
+        <div className='sm:flex items-center justify-between mb-6 lg:mb-12'>
+          {initLoading && <div className='animate-pulse bg-slate-800 rounded-xl w-64 h-8 lg:h-10'></div>}
+          {!initLoading && <Heading1 withMarginBottom={false}>Hi, {displayName}!</Heading1>}
           <Combobox
             value={selectedTimeRange}
-            onChange={value => value && setSelectedTimeRange(value)}
+            onChange={handleOnTimeRangeChange}
           >
-            <div className='relative'>
+            <div className='mt-4 sm:mt-0 relative'>
               <ComboboxInput
-                className='rounded-xl border-none bg-white/5 p-2 text-sm text-white focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25'
+                className='w-40 rounded-xl border-none bg-white/5 px-4 py-2 text-sm text-white'
                 displayValue={(selectedTimeRange: TimeRange) => selectedTimeRange.label}
+                disabled
               />
-              <ComboboxButton className='group absolute inset-y-0 right-0 px-1'>{/* <ChevronDownIcon className='size-4 fill-white/60 group-data-[hover]:fill-white' /> */}</ComboboxButton>
+              <ComboboxButton className='group absolute w-40 sm:w-full inset-y-0 left-0'>
+                <ChevronDownIcon className='w-fit ml-auto mr-2 size-4 fill-white/60 group-data-[hover]:fill-white' />
+              </ComboboxButton>
             </div>
             <ComboboxOptions
               anchor='bottom'
               transition
-              className='mt-4 bg-white/10 backdrop-blur-sm rounded-lg'
+              className='mt-2 bg-slate-800/80 backdrop-blur-sm rounded-lg'
             >
               {TIME_RANGES.map(timeRange => (
                 <ComboboxOption
@@ -100,12 +135,14 @@ export default function Home() {
             <Top5Container
               type='artists'
               items={topArtists}
+              loading={initLoading || top5Loading}
             />
           )}
           {topTracks && (
             <Top5Container
               type='tracks'
               items={topTracks}
+              loading={initLoading || top5Loading}
             />
           )}
         </div>
@@ -115,9 +152,9 @@ export default function Home() {
 
   return (
     <div>
-      {initLoading && <div>Loading...</div>}
+      {authLoading && <LoadingView />}
       {!authLoading && !authenticated && <NotLoggedInView />}
-      {authenticated && !initLoading && <LoggedInView />}
+      {!authLoading && authenticated && <LoggedInView />}
     </div>
   )
 }

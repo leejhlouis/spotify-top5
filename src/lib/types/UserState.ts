@@ -6,5 +6,6 @@ export default interface UserState {
   loading: {
     authLoading: boolean
     initLoading: boolean
+    top5Loading: boolean
   }
 }
