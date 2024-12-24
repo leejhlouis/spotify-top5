@@ -14,14 +14,15 @@ type TrackItem = {
   external_urls: { spotify: string }
 }
 
-export async function GET(_: NextRequest, { params }: { params: Promise<{ slug: string }> }): Promise<NextResponse> {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ slug: string }> }): Promise<NextResponse> {
+  const time_range = request.nextUrl.searchParams.get('time_range') || 'short_term'
   const type = (await params).slug
   if (type != 'artists' && type != 'tracks') {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
   }
 
   const searchParams = new URLSearchParams()
-  searchParams.append('time_range', 'short_term')
+  searchParams.append('time_range', time_range)
   searchParams.append('limit', '5')
   searchParams.append('offset', '0')
 

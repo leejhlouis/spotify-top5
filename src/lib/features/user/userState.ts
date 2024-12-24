@@ -4,6 +4,7 @@ const initialState: UserState = {
   authenticated: false,
   loading: {
     authLoading: true,
+    initLoading: false,
     top5Loading: false
   },
   displayName: '',

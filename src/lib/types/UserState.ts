@@ -5,6 +5,7 @@ export default interface UserState {
   topTracks: []
   loading: {
     authLoading: boolean
+    initLoading: boolean
     top5Loading: boolean
   }
 }
