@@ -7,7 +7,7 @@ import Heading1 from '@/components/Heading1'
 import { useUser, useUserDispatch } from '@/app/user-provider'
 import { fetchProfile, fetchTopArtists, fetchTopTracks, setLoading } from '@/lib/features/user/userActions'
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/react'
-import { ChevronDownIcon, SlashIcon } from '@heroicons/react/24/outline'
+import { ChevronDownIcon, SlashIcon } from '@heroicons/react/24/solid'
 
 type TimeRange = {
   id: number
@@ -97,19 +97,19 @@ export default function Home() {
     return (
       <>
         <div className='sm:flex items-center justify-between mb-6 lg:mb-12'>
-          {initLoading && <div className='animate-pulse bg-slate-800 rounded-xl w-64 h-8 lg:h-10'></div>}
-          {!initLoading && <Heading1 withMarginBottom={false}>Hi, {displayName}!</Heading1>}
+          {!displayName && <div className='animate-pulse bg-slate-800 rounded-xl w-64 h-8 lg:h-10'></div>}
+          {displayName && <Heading1 withMarginBottom={false}>Hi, {displayName}!</Heading1>}
           <Combobox
             value={selectedTimeRange}
             onChange={handleOnTimeRangeChange}
           >
             <div className='mt-4 sm:mt-0 relative'>
               <ComboboxInput
-                className='w-40 rounded-xl border-none bg-white/5 px-4 py-2 text-sm text-white'
+                className='w-44 rounded-xl border-none bg-white/5 px-4 py-2 text-white'
                 displayValue={(selectedTimeRange: TimeRange) => selectedTimeRange.label}
                 disabled
               />
-              <ComboboxButton className='group absolute w-40 sm:w-full inset-y-0 left-0'>
+              <ComboboxButton className='group absolute w-44 sm:w-full inset-y-0 left-0'>
                 <ChevronDownIcon className='w-fit ml-auto mr-2 size-4 fill-white/60 group-data-[hover]:fill-white' />
               </ComboboxButton>
             </div>
@@ -122,9 +122,9 @@ export default function Home() {
                 <ComboboxOption
                   key={timeRange.id}
                   value={timeRange}
-                  className='group flex cursor-pointer items-center gap-2 rounded-lg py-1.5 pl-3 pr-12 select-none data-[focus]:bg-white/10'
+                  className='flex cursor-pointer items-center gap-2 rounded-lg py-1.5 px-3 select-none w-44 hover:bg-white/10'
                 >
-                  <span className='text-sm'>{timeRange.label}</span>
+                  <span>{timeRange.label}</span>
                 </ComboboxOption>
               ))}
             </ComboboxOptions>
@@ -151,10 +151,10 @@ export default function Home() {
   }
 
   return (
-    <div>
+    <>
       {authLoading && <LoadingView />}
       {!authLoading && !authenticated && <NotLoggedInView />}
       {!authLoading && authenticated && <LoggedInView />}
-    </div>
+    </>
   )
 }

@@ -1,16 +1,22 @@
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 
+type Image = { 
+  url: string
+  width: number 
+  height: number 
+}
+
 type ArtistItem = {
   name: string
-  images: { url: string }[]
+  images: Image[]
   external_urls: { spotify: string }
 }
 
 type TrackItem = {
   name: string
   artists: { name: string }[]
-  album: { images: { url: string }[] }
+  album: { images: Image[] }
   external_urls: { spotify: string }
 }
 
@@ -38,13 +44,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   let items
   if (type === 'artists') {
     items = data.items.map(({ name, images, external_urls }: ArtistItem) => ({
-      image: images[0].url,
+      image: (images[images.length-2] ?? images[0]).url, 
       url: external_urls.spotify,
       name
     }))
   } else {
     items = data.items.map(({ name, artists, album, external_urls }: TrackItem) => ({
-      image: album.images[0].url,
+      image: (album.images[album.images.length-2] ?? album.images[0]).url,
       artists: artists.map((artist: { name: string }) => artist.name),
       url: external_urls.spotify,
       name

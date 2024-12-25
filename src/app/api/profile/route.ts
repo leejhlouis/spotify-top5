@@ -11,7 +11,10 @@ export async function GET(): Promise<NextResponse> {
     }
   })
   const { display_name } = await response.json()
-
+  cookieStore.set('displayName', display_name, {
+    expires: new Date(Date.now() +  3600000)
+  });
+  
   return NextResponse.json({
     displayName: display_name
   })
