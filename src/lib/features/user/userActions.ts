@@ -6,7 +6,7 @@ export const checkLoggedIn = async (dispatch: Dispatch<Action>) => {
   if (!response.ok) {
     return
   }
-  const { loggedIn } = await response.json()
+  const { loggedIn, displayName } = await response.json()
   dispatch({
     type: 'setAuthenticated',
     value: loggedIn
@@ -17,6 +17,12 @@ export const checkLoggedIn = async (dispatch: Dispatch<Action>) => {
       authLoading: false
     }
   })
+  if (!!displayName) {
+    dispatch({
+      type: 'setDisplayName',
+      value: displayName
+    })
+  }
 }
 
 export const fetchProfile = async (dispatch: Dispatch<Action>) => {

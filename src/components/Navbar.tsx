@@ -13,7 +13,7 @@ type NavLink = {
 const links: NavLink[] = [
   { href: '/', label: 'Home' },
   { href: '/privacy-policy', label: 'Privacy Policy' },
-  { href: 'https://github.com/leejhlouis/spotify-top5', label: 'Contribute' },
+  { href: 'https://github.com/leejhlouis/spotify-top5', label: 'Contribute' }
 ]
 
 export default function Navbar() {
@@ -23,26 +23,34 @@ export default function Navbar() {
   const logout = () => handleLogOut(userDispatch)
 
   return (
-    <nav className='border-b border-white border-opacity-5'>
-      <Container>
-        <div className='flex justify-end py-4'>
-          <ul className='flex gap-2 sm:gap-4'>
-            {links.map(link => (
-              <li key={link.href}>
-                <Link
-                  className={`text-white ${pathname === link.href ? 'font-bold' : ''}`}
-                  href={link.href}
+    <>
+      <nav className='fixed top-0 w-full border-b border-white border-opacity-5 bg-slate-900/80 backdrop-blur-sm z-10'>
+        <Container>
+          <div className='flex justify-end items-center h-14'>
+            <ul className='flex gap-2.5 sm:gap-4'>
+              {links.map(link => (
+                <li key={link.href}>
+                  <Link
+                    className={`text-white ${pathname === link.href ? 'font-bold' : ''}`}
+                    href={link.href}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+              {authenticated && (
+                <a
+                  className='text-white'
+                  onClick={logout}
                 >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-            {authenticated && (
-              <a className='text-white' onClick={logout}>Logout</a>
-            )}
-          </ul>
-        </div>
-      </Container>
-    </nav>
+                  Logout
+                </a>
+              )}
+            </ul>
+          </div>
+        </Container>
+      </nav>
+      <div className='h-14'></div>
+    </>
   )
 }
