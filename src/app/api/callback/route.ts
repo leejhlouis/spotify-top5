@@ -38,5 +38,5 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
     expires: new Date(Date.now() + expires_in * 1000)
   })
 
-  return NextResponse.redirect(new URL('/', request.url))
+  return NextResponse.redirect(process.env.NEXT_PUBLIC_BASE_URL!)
 }
